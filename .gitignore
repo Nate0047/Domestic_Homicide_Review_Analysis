@@ -1,0 +1,8 @@
+# standard r files
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# datafiles
+dhr_data*
