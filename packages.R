@@ -11,3 +11,5 @@ library(pdftools)
 if(!require("tm")) {install.packages("tm")}
 library(tm)
 
+if(!require("tidytext")) {install.packages("tidytext")}
+library(tidytext)
