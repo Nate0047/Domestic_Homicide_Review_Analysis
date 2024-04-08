@@ -13,3 +13,12 @@ library(tm)
 
 if(!require("tidytext")) {install.packages("tidytext")}
 library(tidytext)
+
+if(!require("igraph")) {install.packages("igraph")}
+library(igraph)
+
+if(!require("ggraph")) {install.packages("ggraph")}
+library(ggraph)
+
+if(!require("widyr")) {install.packages("widyr")}
+library(widyr)
