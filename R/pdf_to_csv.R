@@ -3,9 +3,7 @@
 # takes pdf files and formats them into one csv where each row is a line of text from ther report
 # and the report_id, and page are stored as seperate variables. 
 
-# establish library and packages ---------------------------------------------------------
-source("packages.R")
-
+# import packages ------------------------------------------------------------------------
 library(tidyverse)
 library(pdftools)
 library(tm)
