@@ -48,6 +48,8 @@ ggplot(., aes(x = reorder(report_id, -count), y = count)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
+# exported plot to plot folder
+
 # bigrams --------------------------------------------------------------------------------
 
 # extract bigrams across dhr reports
@@ -81,60 +83,9 @@ ggraph(dhr_bigram_igraph, layout = "fr") +
   geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
   theme_void()
 
-# bigram network analysis on stalking words ----------------------------------------------
+# correlation of all words to stalking words ---------------------------------------------
 
-# # extract stemmed bigrams
-# dhr_stembigram <- dhr_cleantext %>%
-#   select(report_id, stem_words) %>%
-#   unnest_tokens(bigram, stem_words, token = "ngrams", n = 2) %>%
-#   filter(!is.na(bigram))
-# 
-# # seperate and 
-# dhr_stembigram_count <- dhr_stembigram %>%
-#   separate(bigram, c("word1", "word2"), sep = " ") %>%
-#   count(word1, word2, sort = TRUE)
-# 
-# # establish counts of stalking / harassment bigrams
-# dhr_stembigram_count_stalking1 <- dhr_stembigram_count %>%
-#   filter(word1 == "stalk" | word1 == "harass") %>% # stalk/harass as first word
-#   count(word1, word2, sort = TRUE)
-# 
-# dhr_stembigram_count_stalking2 <- dhr_stembigram_count %>%
-#   filter(word2 == "stalk" | word1 == "harass") %>% # stalk/harass as first word
-#   count(word2, word1, sort = TRUE)
-# 
-# # combine the dfs
-# dhr_stembigram_count_stalking <- rbind(dhr_stembigram_count_stalking1, dhr_stembigram_count_stalking2)
-
-dhr_fullbigram_count_stalking1 <- dhr_fullbigram_count %>% 
-  filter(str_detect(word1, "^stalk") | str_detect(word1, "^harass")) %>%
-  count(word2, word1, sort = TRUE)
-
-dhr_fullbigram_count_stalking2 <- dhr_fullbigram_count %>% 
-  filter(str_detect(word2, "^stalk") | str_detect(word2, "^harass")) %>%
-  count(word1, word2, sort = TRUE)
-
-dhr_fullbigram_count_stalking <- rbind(dhr_fullbigram_count_stalking1, dhr_fullbigram_count_stalking2)
-
-# use igraph package to convert counts into graph input
-dhr_bigram_igraph <- dhr_fullbigram_count_stalking %>%
-  igraph::graph_from_data_frame()
-
-# use ggraph package to visualise stalking / harassment specific network
-set.seed(47)
-
-a <- grid::arrow(type = "closed", length = unit(.07, "inches"))
-
-ggraph(dhr_bigram_igraph, layout = "fr") +
-  geom_edge_link(aes(edge_alpha = n), show.legend = FALSE, arrow = a, end_cap = circle(.07, 'inches')) +
-  geom_node_point(size = 0.5) +
-  geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
-  theme_void()
-
-# note: results in huge network of words connected 1 time only to stalking / harassment. 
-# not very interpretable - need to rethink
-
-# correlation of words to stalking words -------------------------------------------------
+# using stemmed tokens, which words correlate with stalk and harass
 
 # word correlations
 word_cors <- dhr_stemtokens %>%
@@ -147,9 +98,9 @@ word_cors %>%
 
 # calculate correlation of stemmed words to stalking (take top 25)
 word_cors %>%
-  filter(item1 %in% c("stalking", "harassment")) %>%
+  filter(item1 %in% c("stalk", "harass")) %>%
   group_by(item1) %>%
-  slice_max(correlation, n = 25) %>%
+  slice_max(correlation, n = 40) %>%
   ungroup() %>%
   mutate(item2 = reorder(item2, correlation)) %>%
 ggplot(aes(item2, correlation)) +
@@ -160,14 +111,16 @@ ggplot(aes(item2, correlation)) +
 # correlation network analysis
 set.seed(47)
 
-word_cor %>%
-  filter(item1 %in% c("stalking", "harassment")) %>%
+a <- grid::arrow(type = "closed", length = unit(.07, "inches"))
+
+word_cors %>%
+  filter(item1 %in% c("stalk", "harass")) %>%
   group_by(item1) %>%
-  slice_max(correlation, n = 25) %>%
+  slice_max(correlation, n = 40) %>%
   ungroup() %>%
   graph_from_data_frame() %>%
   ggraph(layout = "fr") +
-  geom_edge_link(aes(edge_alpha = correlation), show.legend = FALSE) +
+  geom_edge_link(aes(edge_alpha = correlation), show.legend = FALSE, arrow = a, end_cap = circle(.07, 'inches')) +
   geom_node_point(size = 0.5) +
   geom_node_text(aes(label = name), repel = TRUE) +
   theme_void()

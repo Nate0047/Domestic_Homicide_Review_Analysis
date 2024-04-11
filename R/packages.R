@@ -4,7 +4,7 @@
 
 #remove.packages()
 
-#renv::status()
+renv::status()
 
 #renv::restore()
 
