@@ -73,7 +73,8 @@ fs::dir_create("dhr_data_json")
 # write out to json
 jsonlite::write_json(dhr_cleantext, "dhr_data_json/cleaned_and_stemmed_dhrs.json")
 
-
+# clear environment ----------------------------------------------------------------------
+rm(dhr_cleantext, dhr_text, dhr_tokens, stop_words)
 
 
 

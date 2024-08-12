@@ -125,3 +125,7 @@ word_cors %>%
   geom_node_text(aes(label = name), repel = TRUE) +
   theme_void()
 
+# clear environment ----------------------------------------------------------------------
+rm(a, dhr_bigram_igraph, dhr_cleantext, dhr_fullbigram, dhr_fullbigram_count, dhr_fulltokens,
+   dhr_stemtokens, word_cors)
+
