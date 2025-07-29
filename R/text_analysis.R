@@ -27,6 +27,10 @@ dhr_stemtokens <- dhr_cleantext %>%
   select(report_id, stem_words) %>%
   unnest_tokens(word, stem_words)
 
+dhr_stemtokens %>%
+  filter(word == "animal")
+# NOTE - stems to anim, better to work with the full tokens
+
 # exploring report tokens ----------------------------------------------------------------
 
 # calculate counts of tokens across reports
@@ -38,9 +42,9 @@ dhr_fulltokens %>%
   group_by(report_id) %>%
   summarise(n = n())
 
-# calculate presence of stalk | harass across all reports (plot)
-dhr_stemtokens %>% 
-  filter(word == "stalk" | word == "harass") %>%
+# calculate presence of animal across all reports (plot)
+dhr_fulltokens %>% 
+  filter(word == "animal") %>%
   group_by(report_id) %>%
   summarise(count = n()) %>%
 ggplot(., aes(x = reorder(report_id, -count), y = count)) +
@@ -71,7 +75,7 @@ dhr_fullbigram_count <- dhr_fullbigram %>%
 
 # use igraph package to convert counts into graph input
 dhr_bigram_igraph <- dhr_fullbigram_count %>%
-  filter(n > 150) %>%
+  filter(word1 %in% "animal" | word2 %in% "animal") %>%
   igraph::graph_from_data_frame()
 
 # use ggraph package to visualise
@@ -83,24 +87,23 @@ ggraph(dhr_bigram_igraph, layout = "fr") +
   geom_node_text(aes(label = name), vjust = 1, hjust = 1) +
   theme_void()
 
-# correlation of all words to stalking words ---------------------------------------------
+# correlation of all words to animal words ---------------------------------------------
 
-# using stemmed tokens, which words correlate with stalk and harass
+# using stemmed tokens, which words correlate with animal
 
 # word correlations
-word_cors <- dhr_stemtokens %>%
+word_cors <- dhr_fulltokens %>%
   group_by(word) %>%
-  filter(n() > 20) %>%
   pairwise_cor(word, report_id, sort = TRUE)
 
 word_cors %>%
-  filter(str_detect(item1, "^stalk"))
+  filter(str_detect(item1, "^animal"))
 
-# calculate correlation of stemmed words to stalking (take top 25)
+# calculate correlation of stemmed words to animal (take top 20)
 word_cors %>%
-  filter(item1 %in% c("stalk", "harass")) %>%
+  filter(item1 %in% c("animal")) %>%
   group_by(item1) %>%
-  slice_max(correlation, n = 40) %>%
+  slice_max(correlation, n = 20) %>%
   ungroup() %>%
   mutate(item2 = reorder(item2, correlation)) %>%
 ggplot(aes(item2, correlation)) +
@@ -114,7 +117,7 @@ set.seed(47)
 a <- grid::arrow(type = "closed", length = unit(.07, "inches"))
 
 word_cors %>%
-  filter(item1 %in% c("stalk", "harass")) %>%
+  filter(item1 %in% c("animal")) %>%
   group_by(item1) %>%
   slice_max(correlation, n = 40) %>%
   ungroup() %>%

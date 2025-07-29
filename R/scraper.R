@@ -6,12 +6,12 @@
 source("packages.R")
 
 # scraper --------------------------------------------------------------------------------
-
+library(tidyverse)
 library(rvest)
 library(fs)
 
-# set URL for DHR gov website - filtered to stalking - set pagination to 1000 to have all DHR on one webpage
-url <- "https://homicide-review.homeoffice.gov.uk/?Keywords%5B%5D=&Victim-Specific+Information.Victims.Nationality%5B%5D=&Perpetrator%2FSuspect+Information.Perpetrators.Nationality%5B%5D=&Aggravating+Factors%5B%5D=Stalking+factors.Stalking&Basic+Case+Details.Name+of+Community+Safety+Partnership%5B%5D=&pagination%5BsortField%5D=uploadDate&pagination%5BsortDirection%5D=desc&pagination%5BpageSize%5D=1000"
+# set URL for DHR gov website, set pagination to 700 to have all DHR on one webpage
+url <- "https://homicide-review.homeoffice.gov.uk/?pagination%5BpageNumber%5D=0&pagination%5BpageSize%5D=700"
 
 # read html from site
 webpage <- rvest::read_html(url)
@@ -35,6 +35,9 @@ for(i in seq_along(pdf_links)) {
   
   # download the pdf
   download.file(paste0("https://homicide-review.homeoffice.gov.uk", pdf_links[i]), filename, mode = "wb")
+  
+  # rest for 5 seconds
+  Sys.sleep(5)
 }
 
 # move files to a subfolder --------------------------------------------------------------
