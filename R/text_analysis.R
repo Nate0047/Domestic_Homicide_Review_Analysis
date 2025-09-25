@@ -10,6 +10,12 @@ library(igraph)
 library(ggraph)
 library(widyr)
 
+# animal names
+library(wakefield)
+  data("animal_list")
+# turn into single tokens
+single_animal_list <- tolower(animal_list[!str_detect(animal_list, " ")])
+
 # data ingestion and exploration ---------------------------------------------------------
 
 # read in data from json file
@@ -44,7 +50,7 @@ dhr_fulltokens %>%
 
 # calculate presence of animal across all reports (plot)
 dhr_fulltokens %>% 
-  filter(word == "animal") %>%
+  filter(word %in% "rspca") %>%
   group_by(report_id) %>%
   summarise(count = n()) %>%
 ggplot(., aes(x = reorder(report_id, -count), y = count)) +
@@ -53,6 +59,15 @@ ggplot(., aes(x = reorder(report_id, -count), y = count)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 # exported plot to plot folder
+
+# identify all animals
+animal_detected <-
+dhr_fulltokens %>% 
+  filter(word %in% single_animal_list)
+
+animal_detected %>%
+  filter(word != "human") %>%
+  write_excel_csv(., "specific animal name search.csv")
 
 # bigrams --------------------------------------------------------------------------------
 
@@ -75,7 +90,7 @@ dhr_fullbigram_count <- dhr_fullbigram %>%
 
 # use igraph package to convert counts into graph input
 dhr_bigram_igraph <- dhr_fullbigram_count %>%
-  filter(word1 %in% "animal" | word2 %in% "animal") %>%
+  filter(word1 %in% "rspca" | word2 %in% "rspca") %>%
   igraph::graph_from_data_frame()
 
 # use ggraph package to visualise
@@ -101,7 +116,7 @@ word_cors %>%
 
 # calculate correlation of stemmed words to animal (take top 20)
 word_cors %>%
-  filter(item1 %in% c("animal")) %>%
+  filter(item1 %in% c("rspca")) %>%
   group_by(item1) %>%
   slice_max(correlation, n = 20) %>%
   ungroup() %>%
