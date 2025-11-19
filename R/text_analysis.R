@@ -10,12 +10,6 @@ library(igraph)
 library(ggraph)
 library(widyr)
 
-# animal names
-library(wakefield)
-  data("animal_list")
-# turn into single tokens
-single_animal_list <- tolower(animal_list[!str_detect(animal_list, " ")])
-
 # data ingestion and exploration ---------------------------------------------------------
 
 # read in data from json file
@@ -34,10 +28,14 @@ dhr_stemtokens <- dhr_cleantext %>%
   unnest_tokens(word, stem_words)
 
 dhr_stemtokens %>%
-  filter(word == "animal")
-# NOTE - stems to anim, better to work with the full tokens
+  filter(word == "animal") # could not find
+# NOTE - animal stems to anim, better to work with the full tokens
 
 # exploring report tokens ----------------------------------------------------------------
+
+# calcualte total count of unique tokens across reports
+dhr_fulltokens %>%
+  summarise(unique_words = n_distinct(word))
 
 # calculate counts of tokens across reports
 dhr_fulltokens %>%
@@ -59,15 +57,6 @@ ggplot(., aes(x = reorder(report_id, -count), y = count)) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 # exported plot to plot folder
-
-# identify all animals
-animal_detected <-
-dhr_fulltokens %>% 
-  filter(word %in% single_animal_list)
-
-animal_detected %>%
-  filter(word != "human") %>%
-  write_excel_csv(., "specific animal name search.csv")
 
 # bigrams --------------------------------------------------------------------------------
 
