@@ -14,3 +14,6 @@ source("R/text_cleaning.R")
 
 # conduct general text analysis on the dhr reports
 source("R/text_analysis.R")
+
+# extracts all animal terms from DHR tokens
+source("R/animal_extract.R")
