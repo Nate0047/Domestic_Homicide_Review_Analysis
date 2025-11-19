@@ -4,7 +4,7 @@
 source("R/packages.R")
 
 # deploy webscraper to scrape dhrs from gov website
-#source("R/scraper.R")
+#source("R/scraper.R") # uncomment this module if scraper is to run.
 
 # convert downloaded pdfs into single .csv
 source("R/pdf_to_csv.R")
