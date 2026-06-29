@@ -3,7 +3,7 @@
 # this script downloads the .pdfs from gov website and stores them within project file
 
 # establish library and packages ---------------------------------------------------------
-source("packages.R")
+#source("packages.R")
 
 # scraper --------------------------------------------------------------------------------
 library(tidyverse)
@@ -21,21 +21,24 @@ pdf_links <- webpage %>%
   html_nodes("a") %>%
   html_attr("href")
 
-# filter list of links relating to /download/ 
+# filter list of links relating to /download/
 pdf_links <- pdf_links[str_detect(pdf_links, "^/download/")]
 
 # de-duplicate (replication caused by view & download function on webpage)
 pdf_links <- unique(pdf_links)
 
 # for loop over urls to d/l each pdf
-for(i in seq_along(pdf_links)) {
-  
+for (i in seq_along(pdf_links)) {
   # create filename for each pdf
   filename <- paste0("pdf", i, ".pdf")
-  
+
   # download the pdf
-  download.file(paste0("https://homicide-review.homeoffice.gov.uk", pdf_links[i]), filename, mode = "wb")
-  
+  download.file(
+    paste0("https://homicide-review.homeoffice.gov.uk", pdf_links[i]),
+    filename,
+    mode = "wb"
+  )
+
   # rest for 5 seconds
   Sys.sleep(5)
 }
@@ -53,7 +56,3 @@ fs::file_move(pdf_files, file.path("dhr_data_pdf", basename(pdf_files)))
 
 # clear environment ----------------------------------------------------------------------
 rm(webpage, filename, i, pdf_links, url, pdf_files)
-
-
-
-
