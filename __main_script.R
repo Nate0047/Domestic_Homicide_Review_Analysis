@@ -18,6 +18,8 @@ source("R/text_analysis.R")
 # extracts all animal terms from DHR tokens
 source("R/animal_extract.R")
 
-# broke down the 654 DHRs into over 6 million unique tokens
-# animal list checked against this, finding 2186 hits
+# broke down the 654 DHRs as of 30 June 2026
+# total words: 13.2 million words
+# total unique tokens: 6 million unique tokens
+# animal list checked against this, finding 1758 hits
 # many of these will be false positives

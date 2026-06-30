@@ -1,6 +1,6 @@
 {
   "R": {
-    "Version": "4.3.0",
+    "Version": "4.3.1",
     "Repositories": [
       {
         "Name": "CRAN",
@@ -286,6 +286,18 @@
         "tibble"
       ],
       "Hash": "f61dbaec772ccd2e17705c1e872e9e7c"
+    },
+    "chron": {
+      "Package": "chron",
+      "Version": "2.3-62",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "graphics",
+        "stats"
+      ],
+      "Hash": "44b447294e88a86666295775d1420522"
     },
     "cli": {
       "Package": "cli",
@@ -1836,6 +1848,20 @@
         "withr"
       ],
       "Hash": "7015a74373b83ffaef64023f4a0f5033"
+    },
+    "wakefield": {
+      "Package": "wakefield",
+      "Version": "0.3.6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "chron",
+        "dplyr",
+        "ggplot2",
+        "stringi"
+      ],
+      "Hash": "2e8c0f5e2f63a3e9ea0cd1503b78e3f5"
     },
     "widyr": {
       "Package": "widyr",
